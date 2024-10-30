@@ -16,7 +16,7 @@
 <body>
     <div id="app">
         <header>
-            <a href="#" class="logo" @click="goHome">Home</a>
+            <a href="#" class="logo" @click="goHome">Homepage</a>
             <h1 v-text="sitename"></h1>
             <button v-on:click="showCheckout" :disabled="cart.length === 0">
                 {{ cartItemCount }}
