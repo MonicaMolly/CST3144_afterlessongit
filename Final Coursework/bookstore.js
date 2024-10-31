@@ -28,7 +28,7 @@ let bookstore = [
 
     },
     {
-        "image": "images/Music.webp ",
+        "image": "images/Music.webp",
         "subject" : "Music",
         "Location": "Bristol",
         "Price": 90,
@@ -37,7 +37,7 @@ let bookstore = [
 
     },
     {
-        "image": "images/Sign1.jpg ",
+        "image": "images/Sign1.jpg",
         "subject" : "Sign Language for baby",
         "Location": "Botswana",
         "Price": 50,
@@ -64,7 +64,7 @@ let bookstore = [
 
     },
     {
-        "image": "images/gym.jpg ",
+        "image": "images/gym.jpg",
         "subject" : "Gym",
         "Location": "Brazil",
         "Price": 150,

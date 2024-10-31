@@ -164,9 +164,10 @@
                 }
             },
             computed: {
-                cartItemCount: function () {
-                    return this.cart.length || "";
+                cartItemCount() {
+                    return this.cart.length ? `${this.cart.length} items` : "Checkout";
                 },
+
                 totalPrice: function () {
                     return this.cart.reduce((total, item) => total + item.Price, 0);
                 }
