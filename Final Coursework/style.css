@@ -1,26 +1,25 @@
 .grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     padding: 16px;
 }
+
 .card {
+    flex: 0 1 300px; 
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
+    border-radius: 3px;
+    padding: 10px;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .card img {
-    max-width: 100%;
-    border-radius: 4px;
+    max-width: 110%;
+    border-radius: 0px;
+  
 }
-.logo {
-    font-weight: bold;
-    font-size: 1.2em;
-    text-decoration: none;
-    color: #333;
-    margin-right: 20px;
-}
+
 header {
     display: flex;
     align-items: center;
@@ -28,6 +27,16 @@ header {
     padding: 16px;
     border-bottom: 1px solid #ddd;
 }
+
+.logo {
+    font-weight: bold;
+    font-size: 1.2em;
+    text-decoration: none;
+    color: #333;
+    margin-right: 20px;
+    transition: color 0.3s ease;
+}
+
 button {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -38,21 +47,34 @@ button:hover {
     cursor: pointer;
 }
 
-.logo {
-    transition: color 0.3s ease;
-}
-
 .logo:hover {
     color: #4CAF50; 
     cursor: pointer;
 }
 
-.card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
 .card:hover {
     transform: scale(1.05);
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+/* Validation */
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+input:focus, select:focus {
+    border-color: #4CAF50;
+    box-shadow: 0px 0px 4px #4CAF50;
+}
+
+input.invalid, select.invalid {
+    border-color: red;
+    box-shadow: 0px 0px 4px red;
+}
+
+input.valid, select.valid {
+    border-color: green;
+    box-shadow: 0px 0px 4px green;
 }
 

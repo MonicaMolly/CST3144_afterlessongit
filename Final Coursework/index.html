@@ -1,30 +1,37 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookstore</title>
-    
+    <title>AfterSchoolLessons</title>
+
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="bookstore.js"></script> 
+    <script src="bookstore.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div id="app">
         <header>
-            <a href="#" class="logo" @click="goHome">Homepage</a>
+            <a href="#" class="logo" @click.prevent="goHome">Home</a>
             <h1 v-text="sitename"></h1>
+
+            <div>
+                <label for="search">Search:</label>
+                <input type="text" v-model="searchQuery" placeholder="Search by subject or location..." @input="filterBooks" />
+            </div>
+
             <button v-on:click="showCheckout" :disabled="cart.length === 0">
-                {{ cartItemCount }}
-                <span class="bi bi-cart"></span> Checkout
+                {{ cart.length }} <span class="bi bi-cart"></span> Checkout
             </button>
+
         </header>
 
         <main>
+
             <div>
                 <label for="sortBy">Sort By:</label>
                 <select v-model="sortBy" @change="sortBooks">
@@ -38,14 +45,16 @@
                     <option value="desc">Descending</option>
                 </select>
             </div>
+
             <div v-if="showBook" class="grid-container">
-                <div v-for="book in bookstore" :key="book.subject + book.Location" class="card">
+                <div v-for="book in filteredBooks" :key="book.subject" class="card">
                     <figure>
                         <img v-bind:src="book.image" alt="book image">
                     </figure>
                     <h2 v-text="book.subject"></h2>
                     <p>Location: {{ book.Location }}</p>
                     <p>Price: ${{ book.Price }}</p>
+                    <P>Spaces: {{ book.Spaces - cartCount(book.subject, book.Location) }}</P>
                     <button v-on:click="addToCart(book)" v-if="canAddToCart(book)">
                         Add to cart
                     </button>
@@ -65,7 +74,7 @@
                     </div>
                 </div>
             </div>
-           
+
             <div v-else>
                 <h2>Checkout</h2>
                 <div v-if="cart.length > 0" class="grid-container">
@@ -77,58 +86,64 @@
                             <h5 class="card-title">{{ item.subject }}</h5>
                             <p>Location: {{ item.Location }}</p>
                             <p>Price: ${{ item.Price }}</p>
+                            <P>Spaces: {{ item.Spaces }}</P>
                             <button class="btn btn-danger" @click="removeFromCart(i)">Remove</button>
                         </div>
                     </div>
-
                 </div>
                 <div class="card">
                     <h3>Total Price: ${{ totalPrice }}</h3>
                 </div>
-                <button v-on:click="submitForm" :disabled="cart.length === 0">Place Order</button>
+                <p><strong>First Name:</strong> <input v-model.trim="order.firstName" @input="validateField('firstName')" />
+                    <span v-if="errors.firstName" class="error">{{ errors.firstName }}</span>
+                </p>
+                <p><strong>Last Name:</strong> <input v-model.trim="order.lastName" @input="validateField('lastName')" />
+                    <span v-if="errors.lastName" class="error">{{ errors.lastName }}</span>
+                </p>
+                <p><strong>Phone Number:</strong> <input v-model.number.trim="order.phoneNumber" @input="validateField('phoneNumber')" />
+                    <span v-if="errors.phoneNumber" class="error">{{ errors.phoneNumber }}</span>
+                </p>
+                <p><strong>Address:</strong> <input v-model.trim="order.address" @input="validateField('address')" />
+                    <span v-if="errors.address" class="error">{{ errors.address }}</span>
+                </p>
+                <p><strong>City:</strong> <input v-model.trim="order.city" @input="validateField('city')" />
+                    <span v-if="errors.city" class="error">{{ errors.city }}</span>
+                </p>
+                <p><strong>Emirate:</strong>
+                    <select v-model="order.emirate" @change="validateField('emirate')">
+                        <option disabled value="">Emirate</option>
+                        <option v-for="(emirate, key) in emirates" :value="emirate">{{ key }}</option>
+                    </select>
+                    <span v-if="errors.emirate" class="error">{{ errors.emirate }}</span>
+                </p>
+                <p><strong>Zip/Postal Code:</strong> <input v-model.number.trim="order.zip" @input="validateField('zip')" />
+                    <span v-if="errors.zip" class="error">{{ errors.zip }}</span>
+                </p>
+                <p><input type="checkbox" id="gift" v-model="order.gift">
+                    <label for="gift">Ship As Gift?</label>
+                </p>
+                <p>
+                    <input type="radio" id="home" value="Home" v-model="order.method">
+                    <label for="home">Home</label>
+                    <input type="radio" id="business" value="Business" v-model="order.method">
+                    <label for="business">Business</label>
+                </p>
 
-                <p><strong>First Name:</strong> <input v-model.trim="order.firstName" /></p>
-                    <p><strong>Last Name:</strong> <input v-model.trim="order.lastName" /></p>
-                    <p><strong>Phone Number:</strong> <input v-model.number.trim="order.phoneNumber" /></p>
-                    <p><strong>Address:</strong> <input v-model.trim="order.address" /></p>
-                    <p><strong>City:</strong> <input v-model.trim="order.city" /></p>
-                    <p><strong>Emirate:</strong>
-                        <select v-model="order.emirate">
-                            <option disabled value="">Emirate</option>
-                            <option v-for="(emirate, key) in emirates" :value="emirate">{{ key }}</option>
-                        </select>
-                    </p>
-                    <p><strong>Zip/Postal Code:</strong> <input v-model.number.trim="order.zip" /></p>
-                    <p><input type="checkbox" id="gift" value="true" v-model="order.gift" :true-value="order.sendGift" :false-value="order.dontSendGift">
-                        <label for="gift">Ship As Gift?</label>
-                    </p>
-                    <p><input type="radio" id="home" value="Home" v-model="order.method">
-                        <label for="home">Home</label>
-                        <input type="radio" id="business" value="Business" v-model="order.method">
-                        <label for="business">Business</label>
-                    </p>
-                    <h2>Order Information</h2>
-                    <p>First Name: {{order.firstName}}</p>
-                    <p>Last Name: {{order.lastName}}</p>
-                    <p>Phone Number: {{order.phoneNumber}}</p>
-                    <p>Address: {{order.address}}</p>
-                    <p>City: {{order.city}}</p>
-                    <p>Emirate: {{order.emirate}}</p>
-                    <p>Zip: {{order.zip}}</p>
-                    <p>Gift?: {{order.gift}}</p>
-                    <p>Method: {{order.method}}</p>
-
-                <p v-else class="text-center">Please add an item to cart.</p>            
+                <button v-on:click="submitForm" :disabled="cart.length === 0 || hasErrors" class="btn btn-primary">
+                    Place Order
+                </button>
             </div>
         </main>
     </div>
 
-    <script type="text/javascript">
+    <script>
         let webstore = new Vue({
             el: '#app',
             data: {
-                sitename: "After Class Lesson",
+                sitename: "After School Lessons",
                 showBook: true,
+                searchQuery: "",
+                filteredBooks: bookstore,
                 order: {
                     firstName: "",
                     lastName: "",
@@ -136,65 +151,115 @@
                     address: "",
                     city: "",
                     zip: "",
-                    state: "",
+                    emirate: "",
                     method: 'Home',
                     gift: false,
                 },
+                errors: {},
                 emirates: {
                     DU: 'Dubai',
                     SJ: 'Sharjah',
                     AD: 'Abu Dhabi',
-                  
                 },
                 bookstore: bookstore,
-                cart: []
+                cart: [],
+                sortBy: 'subject',
+                sortOrder: 'asc'
+            },
+            computed: {
+                cartItemCount() {
+                    return this.cart.length;
+                },
+                totalPrice() {
+                    return this.cart.reduce((sum, item) => sum + item.Price, 0).toFixed(2);
+                },
+                hasErrors() {
+                    return Object.keys(this.errors).length > 0;
+                }
             },
             methods: {
-                addToCart: function (book) {
+                addToCart(book) {
                     this.cart.push(book);
                 },
                 showCheckout() {
                     this.showBook = !this.showBook;
                 },
                 submitForm() {
-                    if (this.cart.length > 0) {
-                        alert('Order submitted!');
+                    if (!this.hasErrors) {
+                        alert('Order submitted successfully!');
                     } else {
-                        alert('Your cart is empty. Please add items to proceed.');
+                        alert('Please fix the errors before submitting.');
                     }
                 },
-                canAddToCart: function (book) {
+                canAddToCart(book) {
                     return book.Spaces > this.cartCount(book.subject, book.Location);
                 },
-                cartCount: function (subject, Location) {
+                cartCount(subject, Location) {
                     return this.cart.filter(item => item.subject === subject && item.Location === Location).length;
                 },
                 removeFromCart(index) {
                     this.cart.splice(index, 1);
                 },
                 goHome() {
-                    this.showBook = true; // Show the main page content
+                    this.showBook = true;
                 },
                 sortBooks() {
                     const orderMultiplier = this.sortOrder === 'asc' ? 1 : -1;
-                    this.bookstore.sort((a, b) => {
+                    this.filteredBooks.sort((a, b) => {
                         if (a[this.sortBy] < b[this.sortBy]) return -1 * orderMultiplier;
                         if (a[this.sortBy] > b[this.sortBy]) return 1 * orderMultiplier;
                         return 0;
-                    })
+                    });
                 },
-        
-            computed: {
-                cartItemCount() {
-                    return this.cart.length ? `${this.cart.length} items` : "Checkout";
+                filterBooks() {
+                    const query = this.searchQuery.toLowerCase();
+                    this.filteredBooks = this.bookstore.filter(book =>
+                        book.subject.toLowerCase().includes(query) ||
+                        book.Location.toLowerCase().includes(query)
+                    );
                 },
+               validateField(field) {
+                    const inputElement = document.querySelector(`[v-model="${field}"]`);
+                    switch (field) {
+                        case 'firstName':
+                            this.errors.firstName = !this.order.firstName ? 'First Name is required.' : '';
+                            break;
+                        case 'lastName':
+                            this.errors.lastName = !this.order.lastName ? 'Last Name is required.' : '';
+                            break;
+                        case 'phoneNumber':
+                            this.errors.phoneNumber = !this.order.phoneNumber || isNaN(this.order.phoneNumber) ? 'Valid Phone Number is required.' : '';
+                            break;
+                        case 'address':
+                            this.errors.address = !this.order.address ? 'Address is required.' : '';
+                            break;
+                        case 'city':
+                            this.errors.city = !this.order.city ? 'City is required.' : '';
+                            break;
+                        case 'emirate':
+                            this.errors.emirate = !this.order.emirate ? 'Please select an emirate.' : '';
+                            break;
+                        case 'zip':
+                            this.errors.zip = !this.order.zip || isNaN(this.order.zip) ? 'Valid Zip/Postal Code is required.' : '';
+                            break;
+                        default:
+                            break;
+                    }
 
-                totalPrice: function () {
-                    return this.cart.reduce((total, item) => total + item.Price, 0);
-                },
-            },
-        },
-});
+                    // Add validation classes
+                    if (inputElement) {
+                        if (this.errors[field]) {
+                            inputElement.classList.add('invalid');
+                            inputElement.classList.remove('valid');
+                        } else {
+                            inputElement.classList.add('valid');
+                            inputElement.classList.remove('invalid');
+                        }
+                    }
+                }
+
+            }
+        });
     </script>
 </body>
 
