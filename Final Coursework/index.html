@@ -14,6 +14,47 @@
 </head>
 
 <body>
+
+    <p>Add new lessons to the <code>lessons</code> collection</p>
+    <code>  {
+        "image": "images/dance.jpg", 
+        "subject" : "Ballet",
+        "Location": "London",
+        "Price": 100,
+        "Spaces": 5,
+        "rating": 5 
+    }
+    </code>
+
+    <p>The response: <span id='response'></span></p>
+    <p>Error: <span id='error'></span></p>
+    <script>
+        const newProduct =   {
+          "image": "images/dance.jpg", 
+          "subject" : "Ballet",
+          "Location": "London",
+          "Price": 100,
+          "Spaces": 5,
+          "rating": 5 
+    }
+
+        // set the url to your server and route
+        fetch('http://localhost:3000/collection/lessons', {
+            method: 'POST', // set the HTTP method as 'POST'
+            headers: {
+                'Content-Type': 'application/json', // set the data type as JSON
+            },
+            body: JSON.stringify(newProduct), // stringify the JSON object
+        })
+            .then(response => response.json())
+            .then(responseJSON => {
+                document.getElementById('response').innerText = JSON.stringify(responseJSON);
+            })
+            .catch((error) => {
+                document.getElementById('error').innerText = error;
+            });
+    </script>
+    
     <div id="app">
         <header>
             <a href="#" class="logo" @click.prevent="goHome">Home</a>

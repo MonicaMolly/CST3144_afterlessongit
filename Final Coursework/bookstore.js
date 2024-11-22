@@ -11,11 +11,11 @@ let bookstore = [
     },
     {
         "image": "images/Swim.jpg",
-        "subject" : "Swim",
+       "subject" : "Swim",
         "Location": "London",
         "Price": 100,
         "Spaces": 5,
-        "rating": 5 
+        "rating": 5  
 
     },
     {
