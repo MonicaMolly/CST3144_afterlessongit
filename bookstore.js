@@ -1,8 +1,8 @@
 let bookstore = [
 
     {
-          "image": "images/dance.jpg", 
-          "subject" : "Ballet",
+          "image": "images/Tennis.png", 
+          "subject" : "Tennis",
           "Location": "London",
           "Price": 100,
           "Spaces": 5,
@@ -10,7 +10,7 @@ let bookstore = [
 
     },
     {
-        "image": "images/Swim.jpg",
+        "image": "images/swimming.jpg",
        "subject" : "Swim",
         "Location": "London",
         "Price": 100,
@@ -19,8 +19,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/Soccer.jpg",
-        "subject" : "Soccer",
+        "image": "images/Football.jpg",
+        "subject" : "Football",
         "Location": "York",
         "Price": 80,
         "Spaces": 5,
@@ -28,8 +28,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/Music.webp",
-        "subject" : "Music",
+        "image": "images/chess.jpg",
+        "subject" : "Chess",
         "Location": "Bristol",
         "Price": 90,
         "Spaces": 5,
@@ -37,8 +37,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/Sign1.jpg",
-        "subject" : "Sign Language for baby",
+        "image": "images/baseball.jpg",
+        "subject" : "Baseball",
         "Location": "Botswana",
         "Price": 50,
         "Spaces": 5,
@@ -46,8 +46,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/creative.jpg",
-        "subject" : "Creavite Minds",
+        "image": "images/hockey.jpg",
+        "subject" : "Hockey",
         "Location": "New York",
         "Price": 280,
         "Spaces": 5,
@@ -55,8 +55,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/base.jpg",
-        "subject" : "Baseball",
+        "image": "images/basketball.jpg",
+        "subject" : "Basketball",
         "Location": "Zimbabwe",
         "Price": 190,
         "Spaces": 5,
@@ -64,8 +64,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/gym.jpg",
-        "subject" : "Gym",
+        "image": "images/Exercise.jpg",
+        "subject" : "Exercise",
         "Location": "Brazil",
         "Price": 150,
         "Spaces": 5,
@@ -73,8 +73,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/netball.webp",
-        "subject" : "Netball",
+        "image": "images/bowling.jpg",
+        "subject" : "Bowling",
         "Location": "Germarny",
         "Price": 20,
         "Spaces": 5,
@@ -82,8 +82,8 @@ let bookstore = [
 
     },
     {
-        "image": "images/guiter.webp",
-        "subject" : "Guiter",
+        "image": "images/rugby.png",
+        "subject" : "Rugby",
         "Location": "Kenya",
         "Price": 24,
         "Spaces": 5,

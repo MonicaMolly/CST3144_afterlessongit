@@ -9,52 +9,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="bookstore.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="afterclass.webmanifest"> 
+
 </head>
 
 <body>
-
-    <p>Add new lessons to the <code>lessons</code> collection</p>
-    <code>  {
-        "image": "images/dance.jpg", 
-        "subject" : "Ballet",
-        "Location": "London",
-        "Price": 100,
-        "Spaces": 5,
-        "rating": 5 
-    }
-    </code>
-
-    <p>The response: <span id='response'></span></p>
-    <p>Error: <span id='error'></span></p>
-    <script>
-        const newProduct =   {
-          "image": "images/dance.jpg", 
-          "subject" : "Ballet",
-          "Location": "London",
-          "Price": 100,
-          "Spaces": 5,
-          "rating": 5 
-    }
-
-        // set the url to your server and route
-        fetch('http://localhost:3000/collection/lessons', {
-            method: 'POST', // set the HTTP method as 'POST'
-            headers: {
-                'Content-Type': 'application/json', // set the data type as JSON
-            },
-            body: JSON.stringify(newProduct), // stringify the JSON object
-        })
-            .then(response => response.json())
-            .then(responseJSON => {
-                document.getElementById('response').innerText = JSON.stringify(responseJSON);
-            })
-            .catch((error) => {
-                document.getElementById('error').innerText = error;
-            });
-    </script>
-    
     <div id="app">
         <header>
             <a href="#" class="logo" @click.prevent="goHome">Home</a>
@@ -119,22 +79,26 @@
             <div v-else>
                 <h2>Checkout</h2>
                 <div v-if="cart.length > 0" class="grid-container">
-                    <div v-for="(item, i) in cart" :key="i" class="card">
-                        <figure>
-                            <img class="card-img" v-bind:src="item.image" width="200" height="200">
-                        </figure>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.subject }}</h5>
-                            <p>Location: {{ item.Location }}</p>
-                            <p>Price: ${{ item.Price }}</p>
-                            <P>Spaces: {{ item.Spaces }}</P>
-                            <button class="btn btn-danger" @click="removeFromCart(i)">Remove</button>
+                    <div v-for="(subject, index) in addedSubjects" :key="index">
+                        <div v-if="firstBookPicker(subject)" :key="firstBookPicker(subject).subject" class="card">
+                            <figure>
+                                <img class="card-img" v-bind:src=" firstBookPicker(subject).image" width="200" height="200">
+                            </figure>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ subject }}</h5>
+                                <p>Location: {{ firstBookPicker(subject).Location }}</p>
+                                <p>Price: ${{ firstBookPicker(subject).Price }}</p>
+                                <p>Spaces: {{ uniqueBookCount(subject) }}</p>
+                                <button class="btn btn-danger" @click="removeFromCart(subject)">Remove</button>
+                            </div>
                         </div>
                     </div>
+                   
                 </div>
                 <div class="card">
                     <h3>Total Price: ${{ totalPrice }}</h3>
                 </div>
+                
                 <p><strong>First Name:</strong> <input v-model.trim="order.firstName" @input="validateField('firstName')" />
                     <span v-if="errors.firstName" class="error">{{ errors.firstName }}</span>
                 </p>
@@ -173,10 +137,24 @@
                 <button v-on:click="submitForm" :disabled="cart.length === 0 || hasErrors" class="btn btn-primary">
                     Place Order
                 </button>
+
+                <div v-if="cart.length > 0" class="order-info">
+                    <h3>Order Information</h3>
+                    <p><strong>First Name:</strong> {{ order.firstName }}</p>
+                    <p><strong>Last Name:</strong> {{ order.lastName }}</p>
+                    <p><strong>Phone Number:</strong> {{ order.phoneNumber }}</p>
+                    <p><strong>Address:</strong> {{ order.address }}</p>
+                    <p><strong>City:</strong> {{ order.city }}</p>
+                    <p><strong>Emirate:</strong> {{ order.emirate }}</p>
+                    <p><strong>Zip/Postal Code:</strong> {{ order.zip }}</p>
+                    <p><strong>Delivery Method:</strong> {{ order.method }}</p>
+                    <p><strong>Ship As Gift:</strong> {{ order.gift ? "Yes" : "No" }}</p>
+                </div>
+                
             </div>
         </main>
     </div>
-
+    <script src="bookstore.js"></script>
     <script>
         let webstore = new Vue({
             el: '#app',
@@ -184,7 +162,7 @@
                 sitename: "After School Lessons",
                 showBook: true,
                 searchQuery: "",
-                filteredBooks: bookstore,
+                filteredBooks: bookstore, //from now on we should get the data from db not from js file; we have to use fetch in the frontend to get the data from backend URL
                 order: {
                     firstName: "",
                     lastName: "",
@@ -205,7 +183,8 @@
                 bookstore: bookstore,
                 cart: [],
                 sortBy: 'subject',
-                sortOrder: 'asc'
+                sortOrder: 'asc',
+                addedSubjects: []
             },
             computed: {
                 cartItemCount() {
@@ -218,16 +197,44 @@
                     return Object.keys(this.errors).length > 0;
                 }
             },
+            mounted(){
+                if(sessionStorage.getItem('cartData')){
+                    this.loadSessionData();
+                }
+               
+            },
             methods: {
                 addToCart(book) {
                     this.cart.push(book);
+                    sessionStorage.setItem('cartData',JSON.stringify(this.cart));
+                    this.checkSubjects();
+                    console.log(this.cart)
+                },
+                checkSubjects(){
+                    var data = new Set(this.cart.map(book => book.subject));
+                    this.addedSubjects = Array.from(data);
+                    console.log(this.addedSubjects);
+                },
+                firstBookPicker(subject){
+                    return this.cart.find( book => book.subject === subject);
+                },
+                uniqueBookCount(subject){
+                    return this.cart.filter( book => book.subject === subject).length;
+                },
+                loadSessionData(){
+                    var cartData = sessionStorage.getItem('cartData');
+                    this.cart = JSON.parse(cartData);
+                    this.checkSubjects();
                 },
                 showCheckout() {
                     this.showBook = !this.showBook;
                 },
                 submitForm() {
+                    sessionStorage.setItem("firstName",this.order.firstName);
+
                     if (!this.hasErrors) {
                         alert('Order submitted successfully!');
+                        window.location.href = 'checkout.html';
                     } else {
                         alert('Please fix the errors before submitting.');
                     }
@@ -238,8 +245,13 @@
                 cartCount(subject, Location) {
                     return this.cart.filter(item => item.subject === subject && item.Location === Location).length;
                 },
-                removeFromCart(index) {
-                    this.cart.splice(index, 1);
+                removeFromCart(subject) {
+                    let subjectBooks = this.cart.filter( book => book.subject === subject);
+                    subjectBooks.splice(0, 1);
+                    this.cart = this.cart.filter( book => book.subject !== subject);
+                    this.cart = this.cart.concat(subjectBooks);
+                    sessionStorage.setItem('cartData',JSON.stringify(this.cart));
+                    console.log(this.cart)
                 },
                 goHome() {
                     this.showBook = true;
@@ -259,8 +271,14 @@
                         book.Location.toLowerCase().includes(query)
                     );
                 },
-               validateField(field) {
-                    const inputElement = document.querySelector(`[v-model="${field}"]`);
+                placeOrder() {
+                    Object.keys(this.order).forEach(this.validateField);
+
+                    if (Object.keys(this.errors).length === 0) {
+                        this.orderPlaced = true;
+                    }
+                },
+                validateField(field) {
                     switch (field) {
                         case 'firstName':
                             this.errors.firstName = !this.order.firstName ? 'First Name is required.' : '';
@@ -286,18 +304,7 @@
                         default:
                             break;
                     }
-
-                    // Add validation classes
-                    if (inputElement) {
-                        if (this.errors[field]) {
-                            inputElement.classList.add('invalid');
-                            inputElement.classList.remove('valid');
-                        } else {
-                            inputElement.classList.add('valid');
-                            inputElement.classList.remove('invalid');
-                        }
-                    }
-                }
+                },
 
             }
         });
@@ -305,3 +312,8 @@
 </body>
 
 </html>
+
+
+
+
+
