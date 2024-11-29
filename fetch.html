@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afterclasslesson</title>
+</head>
+
+<body>
+    <p>Add new lessons to the <code>lessons</code> collection</p>
+    <code>{ subject : "Tennis", Location: "London", Price: 100, Spaces: 5, rating: 5 }</code>
+    <p>The response: <span id='response'></span></p>
+    <p>Error: <span id='error'></span></p>
+    <script>
+        const newbookstore = { subject : "Tennis", Location: "London", Price: 100, Spaces: 5, rating: 5 }
+        
+//         let bookstore = [
+
+//     {
+//           "image": "images/Tennis.png", 
+//           "subject" : "Tennis",
+//           "Location": "London",
+//           "Price": 100,
+//           "Spaces": 5,
+//           "rating": 5 
+
+//     },
+//     {
+//         "image": "images/swimming.jpg",
+//        "subject" : "Swim",
+//         "Location": "London",
+//         "Price": 100,
+//         "Spaces": 5,
+//         "rating": 5  
+
+//     },
+//     {
+//         "image": "images/Football.jpg",
+//         "subject" : "Football",
+//         "Location": "York",
+//         "Price": 80,
+//         "Spaces": 5,
+//         "rating": 5 
+
+//     },
+//     {
+//         "image": "images/chess.jpg",
+//         "subject" : "Chess",
+//         "Location": "Bristol",
+//         "Price": 90,
+//         "Spaces": 5,
+//         "rating": 4 
+
+//     },
+//     {
+//         "image": "images/baseball.jpg",
+//         "subject" : "Baseball",
+//         "Location": "Botswana",
+//         "Price": 50,
+//         "Spaces": 5,
+//         "rating": 5 
+
+//     },
+//     {
+//         "image": "images/hockey.jpg",
+//         "subject" : "Hockey",
+//         "Location": "New York",
+//         "Price": 280,
+//         "Spaces": 5,
+//         "rating": 5 
+
+//     },
+//     {
+//         "image": "images/basketball.jpg",
+//         "subject" : "Basketball",
+//         "Location": "Zimbabwe",
+//         "Price": 190,
+//         "Spaces": 5,
+//         "rating": 4 
+
+//     },
+//     {
+//         "image": "images/Exercise.jpg",
+//         "subject" : "Exercise",
+//         "Location": "Brazil",
+//         "Price": 150,
+//         "Spaces": 5,
+//         "rating": 5 
+
+//     },
+//     {
+//         "image": "images/bowling.jpg",
+//         "subject" : "Bowling",
+//         "Location": "Germarny",
+//         "Price": 20,
+//         "Spaces": 5,
+//         "rating": 4 
+
+//     },
+//     {
+//         "image": "images/rugby.png",
+//         "subject" : "Rugby",
+//         "Location": "Kenya",
+//         "Price": 24,
+//         "Spaces": 5,
+//         "rating": 5 
+
+//     },
+
+// ];
+
+
+        // set the url to your server and route
+        fetch('https://cw1-backend-k8gt.onrender.com/collection/lessons', {
+            method: 'POST', // set the HTTP method as 'POST'
+            headers: {
+                'Content-Type': 'application/json', // set the data type as JSON
+            },
+            body: JSON.stringify(newbookstore), // need to stringify the JSON object
+        })
+            .then(response => response.json())
+            .then(responseJSON => {
+                document.getElementById('response').innerText = JSON.stringify(responseJSON);
+            })
+            .catch((error) => {
+                document.getElementById('error').innerText = error;
+            }),
+
+            {
+            method: 'PUT', // set the HTTP method as 'PUT'
+            headers: {
+                'Content-Type': 'application/json', // set the data type as JSON
+            },
+            body: JSON.stringify(newbookstore), // need to stringify the JSON object
+        }
+            .then(response => response.json())
+            .then(responseJSON => {
+                document.getElementById('response').innerText = JSON.stringify(responseJSON);
+            })
+            .catch((error) => {
+                document.getElementById('error').innerText = error;
+            }),
+            {
+            method: 'GET', // set the HTTP method as 'GET'
+            headers: {
+                'Content-Type': 'application/json', // set the data type as JSON
+            },
+            body: JSON.stringify(newbookstore), // need to stringify the JSON object
+            }
+            .then(response => response.json())
+            .then(responseJSON => {
+                document.getElementById('response').innerText = JSON.stringify(responseJSON);
+            })
+            .catch((error) => {
+                document.getElementById('error').innerText = error;
+            }),
+            {
+            method: 'DETELE', // set the HTTP method as 'DELETE'
+            headers: {
+                'Content-Type': 'application/json', // set the data type as JSON
+            },
+            body: JSON.stringify(newbookstore), // need to stringify the JSON object
+            }
+            .then(response => response.json())
+            .then(responseJSON => {
+                document.getElementById('response').innerText = JSON.stringify(responseJSON);
+            })
+            .catch((error) => {
+                document.getElementById('error').innerText = error;
+            });
+
+    </script>
+</body>
+
+</html>

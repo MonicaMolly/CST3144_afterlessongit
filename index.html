@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="afterclass.webmanifest"> 
+    <script src="bookstore.js"></script>
 
 </head>
 
@@ -54,7 +55,7 @@
                     </figure>
                     <h2 v-text="book.subject"></h2>
                     <p>Location: {{ book.Location }}</p>
-                    <p>Price: ${{ book.Price }}</p>
+                    <p>Price: ${{ book.Price }} </p>
                     <P>Spaces: {{ book.Spaces - cartCount(book.subject, book.Location) }}</P>
                     <button v-on:click="addToCart(book)" v-if="canAddToCart(book)">
                         Add to cart
@@ -96,7 +97,7 @@
                    
                 </div>
                 <div class="card">
-                    <h3>Total Price: ${{ totalPrice }}</h3>
+                    <h3>Total Price:${{ totalPrice }} </h3>
                 </div>
                 
                 <p><strong>First Name:</strong> <input v-model.trim="order.firstName" @input="validateField('firstName')" />
@@ -162,7 +163,8 @@
                 sitename: "After School Lessons",
                 showBook: true,
                 searchQuery: "",
-                filteredBooks: bookstore, //from now on we should get the data from db not from js file; we have to use fetch in the frontend to get the data from backend URL
+                filteredBooks: bookstore,
+                //from now on we should get the data from db not from js file; we have to use fetch in the frontend to get the data from backend URL
                 order: {
                     firstName: "",
                     lastName: "",
@@ -186,6 +188,7 @@
                 sortOrder: 'asc',
                 addedSubjects: []
             },
+
             computed: {
                 cartItemCount() {
                     return this.cart.length;
@@ -197,13 +200,39 @@
                     return Object.keys(this.errors).length > 0;
                 }
             },
-            mounted(){
-                if(sessionStorage.getItem('cartData')){
-                    this.loadSessionData();
-                }
+                created: function() { // this function will be run automatically  
+                    // when creating the Vue instance 
+                    fetch('http://localhost:3000').then( 
+                        function (response) { 
+                            response.json().then( 
+                                function (json) { 
+                                    // save the returned JSON object to 'product' 
+                                        // note that we used 'store.product' instead of 'this.product' 
+                                        store.lessons = json; 
+                                     });
+                                    })
+                                },
+            
+            // mounted(){
+            //     if(sessionStorage.getItem('cartData')){
+            //         this.loadSessionData();
+            //         this.fetchBooks();
+
+            //     }
                
-            },
+            //},
+
             methods: {
+                fetchBooks(){
+                    fetch('https://cw1-backend-k8gt.onrender.com/collection/lessons')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        this.bookstore = data;
+                        this.filteredBooks = data;
+              })
+              .catch((error) => console.error('Error fetching lessons:', error));
+            },
+
                 addToCart(book) {
                     this.cart.push(book);
                     sessionStorage.setItem('cartData',JSON.stringify(this.cart));
@@ -304,9 +333,8 @@
                         default:
                             break;
                     }
-                },
-
-            }
+                }
+            },
         });
     </script>
 </body>
