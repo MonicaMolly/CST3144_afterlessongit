@@ -207,6 +207,7 @@
             created: function() { // this function will be run automatically  
                     // when creating the Vue instance 
                     this.fetchBooks()
+                    this.fetchCart()
             },
 
             methods: {
@@ -221,6 +222,25 @@
               })
               .catch((error) => console.error('Error fetching lessons:', error));
             },
+            fetchCart() {
+                fetch('https://cw1-backend-k8gt.onrender.com/collection/cart')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        this.cart = data;
+                        this.checkSubjects();
+                    })
+                    .catch((error) => console.error('Error fetching cart:', error));
+            },
+            saveCart() {
+                fetch('https://cw1-backend-k8gt.onrender.com/collection/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this.cart),
+                })
+                    .then((response) => response.json())
+                    .then((result) => console.log('Cart updated:', result))
+                    .catch((error) => console.error('Error saving cart:', error));
+            },
 
                 addToCart (book) {
 
@@ -229,7 +249,7 @@
                         let data = this.bookData.filter( bk => bk.subject === book.subject);
                         const count = this.bookData.find( bk => bk.subject === book.subject).Spaces;
                         data.splice(0, 1);
-                        console.log(data);
+                        //console.log(data);
                         data.push({
                         'subject': book.subject,
                         'Location': book.Location,
@@ -239,53 +259,49 @@
 
                         this.bookData = this.bookData.filter( bk => bk.subject !== book.subject);
                         this.bookData = this.bookData.concat(data);
-
+                    } else {
                         
-
-                    }{
                         this.bookData.push({
                         'subject': book.subject,
                         'Location': book.Location,
                         'Price': book.Price,
                         'Spaces': 1,
                     });
-                    }
+                }
+                this.cart.push(book);
+                this.saveCart(); // Save updated cart to backend
+                this.checkSubjects();
+                console.log(this.cart);
 
-                        
-
-                    console.log(this.bookData);
-
-
-
-                    this.cart.push(book);
-                    sessionStorage.setItem('cartData',JSON.stringify(this.cart));
-                    this.checkSubjects();
-                    console.log(this.cart)
                 },
+                removeFromCart(subject) {
+                let subjectBooks = this.cart.filter((book) => book.subject === subject);
+                subjectBooks.splice(0, 1);
+                this.cart = this.cart.filter((book) => book.subject !== subject);
+                this.cart = this.cart.concat(subjectBooks);
+                this.saveCart(); // Save updated cart to backend
+                console.log(this.cart);
+                },
+
                 checkSubjects(){
                     var data = new Set(this.cart.map(book => book.subject));
                     this.addedSubjects = Array.from(data);
                     console.log(this.addedSubjects);
                 },
+
                 firstBookPicker(subject){
                     return this.cart.find( book => book.subject === subject);
                 },
                 uniqueBookCount(subject){
                     return this.cart.filter( book => book.subject === subject).length;
                 },
-                loadSessionData(){
-                    var cartData = sessionStorage.getItem('cartData');
-                    this.cart = JSON.parse(cartData);
-                    this.checkSubjects();
-                },
+              
                 showCheckout() {
                     this.showBook = !this.showBook;
                 },
                 async submitForm () {
                     // save info to database orders collection
-
                     this.order.lessons = this.cart;
-
                     console.log(this.order);
 
                     const headers = new Headers();
@@ -314,14 +330,7 @@
                 cartCount(subject, Location) {
                     return this.cart.filter(item => item.subject === subject && item.Location === Location).length;
                 },
-                removeFromCart(subject) {
-                    let subjectBooks = this.cart.filter( book => book.subject === subject);
-                    subjectBooks.splice(0, 1);
-                    this.cart = this.cart.filter( book => book.subject !== subject);
-                    this.cart = this.cart.concat(subjectBooks);
-                    sessionStorage.setItem('cartData',JSON.stringify(this.cart));
-                    console.log(this.cart)
-                },
+               
                 goHome() {
                     this.showBook = true;
                 },
